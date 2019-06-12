@@ -1,0 +1,153 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}
+	{{ parent()}}Equipe commerciale
+{% endblock %}
+
+{# {% block contentSearch %}
+{% endblock %} #}
+
+{% block h1 %}Equipe commerciale <span class="text-danger h5">({{listCom|length}})</span>{% endblock %}
+
+{% block contentBodyContainer %}
+
+<div>
+	{% block contentBody %}
+
+	<form method="post">
+		<div class="table-responsive">
+			<table id="table" class="table sortable-table">
+				<thead>
+					<tr>
+						<th style="width: 50px;padding-bottom: 0.5%;" class="no-sortable"><input type="checkbox" id="checkall"></th>
+						<th style="width: 130px;" class="sortable" data-field="prenom">Prénom</th>
+						<th style="width: 80px;" class="sortable" data-field="nom">Nom</th>
+						<th style="width: 125px;" class="sortable" data-field="fonction">Fonction</th>
+						<th style="width: 175px;" class="sortable" data-field="zone">Zone affectée</th>
+						<th style="width: 150px;" class="sortable" data-field="entreprise">Entreprises</th>
+						<th style="width: 125px;" class="sortable" data-field="contact">Contacts</th>
+						<th style="width: 60px;text-align: center;" class="table-field-other no-sortable" data-field="autre">&bull;&bull;&bull;</th>
+					</tr>
+				</thead>
+				<tbody id="myTableBody">
+					{% for commercial in listCom %}
+					<tr>
+						<td>
+							<input type="checkbox" class="checkthis" name="deleteData[]" value="{{ commercial.Id }}">
+						</td>
+						<td>
+							{% if commercial.CommercialPhoto is not null %}
+                            <img src="{{asset('build/images/' ~ commercial.CommercialPhoto)}}" class="table-img-profile rounded-circle" title="Photo" alt="Aucune photo">
+                            {% else %}
+                            <img src="{{asset('build/Photo.png')}}" class="table-img-profile rounded-circle" title="Photo" alt="Photo de profil">
+                            {% endif %}
+							<a href="{{ path('editCommercial', {'id':commercial.Id}) }}">	{{commercial.CommercialFirstname}}
+							</a>
+						</td>
+						<td>
+							<a href="{{ path('editCommercial', {'id':commercial.Id}) }}">	{{commercial.CommercialName|upper}}
+							</a>
+						</td>
+						<td>
+							<a href="{{ path('editCommercial', {'id':commercial.Id}) }}">	{{commercial.CommercialJob}}
+							</a>
+						</td>
+						<td>
+							{% if commercial.IdAffectedZone is not null %}
+							<a href="{{ path('editCommercial', {'id':commercial.Id}) }}">	{{commercial.IdAffectedZone.Label}}
+							</a>
+							{% endif %}
+						</td>
+						<td>
+							<div class="commercial-nbCompany">
+								<a href="{{ path('editCommercial', {'id':commercial.Id}) }}">	{{nbCompany[commercial.Id]}}
+								</a>
+							</div>
+						</td>
+
+						<td>
+							<div class="commercial-nbContact">
+								<a href="{{ path('editCommercial', {'id':commercial.Id}) }}">
+									{{nbContact[commercial.Id]}}
+								</a>
+							</div>
+						</td>
+
+						<td>
+							{% if commercial.Email is not null %}
+								<img src="{{asset('build/mail.png')}}" class="commercial-mail" title="{{commercial.Email}}" alt="Email du commercial">
+							{% endif %}
+							{% if commercial.CommercialPhone is not null %}
+								<img src="{{asset('build/tel.png')}}" class="commercial-tel" title="{{commercial.CommercialPhone}}" alt="Tél. fixe direct du commercial">
+							{% endif %}
+						</td>
+					</tr>
+					{% else %}
+					<tr>
+					  <td colspan="8" class="text-center">Aucun commercial</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+
+		<!-- modal-dialog --> 
+		<div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Supprimer ce(s) élément(s)</h5>
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Etes-vous sûr ?
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-white-red return-button" type="button" data-dismiss="modal">
+                            <a href="#">Annuler</a>
+                        </button>
+                        <input class="btn btn-red submit-button" type="submit" name="delete" id="delete" value="SUPPRIMER">
+                    </div>
+                </div>
+            </div>
+        </div>
+	</form>
+
+	<div class="table-after">
+		<div class="row">
+			<div class="table-after-entry">
+				<select id="table-nb-entry" class="table-nb-entry unset-outline">
+					<option value="5">5</option>
+					<option value="10">10</option>
+					<option value="15">15</option>
+					<option value="20">20</option>
+					<option value="25">25</option>
+				</select>
+			</div>
+			<div class="table-nb-functions">
+				<span class="table-after-delete" data-title="Delete" data-toggle="modal" data-target="#delete">
+					<img src="{{asset('build/icon-delete.png')}}" title="Supprimer" alt="Icon suppression">
+				</span>
+				<span class="table-after-export">
+					<img src="{{asset('build/icon-export.png')}}" title="Exporter" alt="Icon exportation">
+				</span>
+				<span class="table-after-import">
+					<img src="{{asset('build/icon-import.png')}}" title="Importer" alt="Icon importation">
+				</span>
+			</div>
+			<div class="table-after-pagination">
+	           <ul class="pagination pagination-lg pager" id="myPager"></ul>
+	        </div>
+	        <div class="table-after-btn-add">
+		       <button class="btn add-button">
+					<a href="{{ path('newCommercial') }}">AJOUTER</a>
+				</button>
+			</div>
+		</div>
+	</div>
+
+	{% endblock %}
+</div>
+{% endblock %}
