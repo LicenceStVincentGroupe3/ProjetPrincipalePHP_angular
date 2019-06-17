@@ -3,10 +3,11 @@
 namespace App\ApiBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\AdminBundle\Entity\Operation;
+use App\AdminBundle\Entity\Operations;
 use App\AdminBundle\Form\OperationType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\VarDumper\VarDumper;
@@ -15,7 +16,7 @@ use Symfony\Component\VarDumper\VarDumper;
 //* @Groups({"Light"})
 //* @MaxDepth(1)
 /**
- * @Route("/operation")
+ * @Route("/operations")
  */
 class OperationController extends AbstractController
 {
@@ -24,7 +25,7 @@ class OperationController extends AbstractController
      */
     public function new(Request $request, SerializerInterface $serializer)
     {
-        $new = new Operation();
+        $new = new Operations();
 
     	$form = $this->createForm(OperationType::class, $new);
         $form->handleRequest($request);
@@ -60,10 +61,10 @@ class OperationController extends AbstractController
         $display = $this->getDoctrine()->getManager();
 
         // Variable qui contient le Repository
-        $operationRepository = $display->getRepository(Operation::class);
+        $operationsRepository = $display->getRepository(Operations::class);
 
         // Equivalent du SELECT * where id=(paramètre)
-        $edit = $operationRepository->find($id);
+        $edit = $operationsRepository->find($id);
 
         $form = $this->createForm(OperationType::class, $edit);
         $form->handleRequest($request);
@@ -98,9 +99,9 @@ class OperationController extends AbstractController
         // Appel de Doctrine
         $display = $this->getDoctrine()->getManager();
 
-        $operationRepository = $display->getRepository(Operation::class);
+        $operationsRepository = $display->getRepository(Operations::class);
 
-        $delete = $operationRepository->find($id);
+        $delete = $operationsRepository->find($id);
 
         $display->remove($delete);
 
@@ -128,23 +129,16 @@ class OperationController extends AbstractController
         $display = $this->getDoctrine()->getManager();
 
         // Variable qui contient le Repository
-        $operationRepository = $display->getRepository(Operation::class);
+        $operationsRepository = $display->getRepository(Operations::class);
 
-        // Equivalent du SELECT *
-        $list = $operationRepository->findAll();
+        $nbOperation = $operationsRepository->countActiveOperation();
 
-        if ($request->isXmlHttpRequest()) {
-            $json = $serializer->serialize(
-                $list,
-                'json',
-                ['groups'=>["Light"]]
-            );
 
-            $response = new Response();
-            $response->setContent($json);
-            $response->headers->set('Content-type', 'application/JSON');
+        $response = new JsonResponse(["activeOperation" => $nbOperation[1]]);
 
-            return $response;
-        }
+        header("Access-Control-Allow-Origin: *");
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
     }
 }

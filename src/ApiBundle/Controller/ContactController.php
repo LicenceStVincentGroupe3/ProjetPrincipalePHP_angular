@@ -156,6 +156,9 @@ class ContactController extends AbstractController
 
         $response = new JsonResponse(["contactActive" => $nbContact[1]]);
 
+        header("Access-Control-Allow-Origin: *");
+        $response->headers->set('Content-Type', 'application/json');
+
         return $response;
     }
 }

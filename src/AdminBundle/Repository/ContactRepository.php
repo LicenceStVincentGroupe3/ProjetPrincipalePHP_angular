@@ -34,7 +34,7 @@ class ContactRepository extends ServiceEntityRepository
     {
         $query = $this->createQueryBuilder('c');
         $query->select('COUNT(c.id)');
-        $query->where('c.contactStatus = 0');
+        $query->where('c.contactStatus = 1');
         $result = $query->getQuery()->getSingleResult();
 
         return $result;

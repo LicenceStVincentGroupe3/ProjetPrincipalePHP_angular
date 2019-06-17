@@ -59,4 +59,16 @@ class OperationsRepository extends ServiceEntityRepository
             ->execute()
         ;
     }
+
+    public function countActiveOperation()
+    {
+        $query = $this->createQueryBuilder('o');
+        $query->select('COUNT(o.operationCode)');
+        $query->where('o.operationSendingDate < :currentDate');
+        $query->andWhere('o.operationClosingDate > :currentDate');
+        $query->setParameter('currentDate', date("Y-m-d H:i:s"));
+        $result = $query->getQuery()->getSingleResult();
+
+        return $result;
+    }
 }
