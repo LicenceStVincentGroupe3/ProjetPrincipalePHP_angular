@@ -141,6 +141,9 @@ class CompanyController extends AbstractController
         */
         $response = new JsonResponse(["companyActive" => $nbCompany[1]]);
 
+        header("Access-Control-Allow-Origin: *");
+        $response->headers->set('Content-Type', 'application/json');
+
         return $response;
     }
 }
