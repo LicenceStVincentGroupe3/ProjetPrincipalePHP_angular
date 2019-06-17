@@ -35,7 +35,7 @@ class CompanyRepository extends ServiceEntityRepository
     {
         $query = $this->createQueryBuilder('c');
         $query->select('COUNT(c.id)');
-        $query->where('c.CompanyStatus = 0');
+        $query->where('c.CompanyStatus = 1');
         $result = $query->getQuery()->getSingleResult();
 
         return $result;

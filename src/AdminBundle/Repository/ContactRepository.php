@@ -30,6 +30,16 @@ class ContactRepository extends ServiceEntityRepository
         return $result;
     }
 
+    public function countContactActive()
+    {
+        $query = $this->createQueryBuilder('c');
+        $query->select('COUNT(c.id)');
+        $query->where('c.contactStatus = 0');
+        $result = $query->getQuery()->getSingleResult();
+
+        return $result;
+    }
+
     // Contact N+1
     public function listContactN1($idComp)
     {

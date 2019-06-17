@@ -131,14 +131,15 @@ class CompanyController extends AbstractController
         $companyRepository = $display->getRepository(Company::class);
 
         // Equivalent du SELECT *
-        $list = $companyRepository->findAll();
-
+        $nbCompany = $companyRepository->countCompanyActive();
+        /*
         $data = [];
+
         foreach ($list as $company) {
             $data[] = $company->getCompanyLastName();
         }
-
-        $response = new JsonResponse($data);
+        */
+        $response = new JsonResponse(["companyActive" => $nbCompany[1]]);
 
         return $response;
     }
